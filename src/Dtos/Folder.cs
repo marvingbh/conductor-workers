@@ -10,18 +10,19 @@ namespace Workers.Dtos
 
     public class UploadContentDto
     {
-        public Folders[] files { get; set; }
+        public Folder[] files { get; set; }
     }
 
 
     public class InputContents
     {
-        public Folders[] contents { get; set; }
+        public Folder[] contents { get; set; }
     }
-    public class Folders
+    public class Folder
     {
         public string id { get; set; }
         public string name { get; set; }
+        public List<Folder> SubFolders { get; set; }  = new List<Folder>();
         public List<Content> Contents { get; set; }
         public bool ShouldCreateFolder { get; set; }
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\work\\FlorenceHC\\Workers\\Workers\\Workers.csproj": {}
+    "D:\\work\\FlorenceHC\\Workers\\src\\Workers.csproj": {}
   },
   "projects": {
-    "D:\\work\\FlorenceHC\\Workers\\Workers\\Workers.csproj": {
+    "D:\\work\\FlorenceHC\\Workers\\src\\Workers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\work\\FlorenceHC\\Workers\\Workers\\Workers.csproj",
+        "projectUniqueName": "D:\\work\\FlorenceHC\\Workers\\src\\Workers.csproj",
         "projectName": "Workers",
-        "projectPath": "D:\\work\\FlorenceHC\\Workers\\Workers\\Workers.csproj",
+        "projectPath": "D:\\work\\FlorenceHC\\Workers\\src\\Workers.csproj",
         "packagesPath": "C:\\Users\\mgued\\.nuget\\packages\\",
-        "outputPath": "D:\\work\\FlorenceHC\\Workers\\Workers\\obj\\",
+        "outputPath": "D:\\work\\FlorenceHC\\Workers\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mgued\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -41,6 +41,14 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[106.13.0, )"
+            },
             "conductor-csharp": {
               "target": "Package",
               "version": "[1.0.7, )"
