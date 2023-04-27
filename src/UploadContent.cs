@@ -36,27 +36,68 @@ public class UploadContent : IWorkflowTask
             client.AuthenticateAsync("W4B5eVkg4BOCdMRdzNJrrPQjeKEUpJis", "u6Urn4HWqlJBWzhjFhsHVsBw2SzQNE49r5SrouKqHgoDkXSLnJ3nA_taEBqLfRuy", "https://uat.api.researchbinders.com").GetAwaiter().GetResult();
             //Download Content
             var contentService = new ContentServices(client);
-            foreach (var folder in uploadContent.files)
+            var folderService = new FolderServices(client);
+            var folders = uploadContent.files;
+
+            CreateFolders(folders, folderService, destinationId, destinationBinderId, contentService, teamId);
+
+            var output = new Dictionary<string, object>
             {
-                if (folder.ShouldCreateFolder)
-                {
-                    //create folder
-                    continue;
-                }
-                foreach (var content in folder.Contents)
-                {
-                    var (fileBytes, fileName) = contentService.DownloadContent(teamId, content.id).GetAwaiter().GetResult();
+                { "contents", folders },
+            };
 
-                    var response = contentService.UploadContent(destinationId, fileBytes, fileName+".pdf",
-                        destinationBinderId, folder.id).GetAwaiter().GetResult();
-                }
-            }
-
-            return task.Completed();
+            return task.Completed(output);
         }
         catch (Exception e)
         {
             return task.Failed(e.Message);
+        }
+    }
+
+    private static void CreateFolders(List<Folder> folders, FolderServices folderService, string destinationId,
+        string destinationBinderId, ContentServices contentService, string teamId, string parentFolderId = null)
+    {
+        foreach (var folder in folders)
+        {
+            folder.Status = "Exist in destination";
+            if (folder.ShouldCreateFolder)
+            {
+                //create folder
+                try
+                {
+                    var createdFolder = folderService.CreateFolder(destinationId, destinationBinderId, folder.name, parentFolderId)
+                        .GetAwaiter().GetResult();
+                    folder.id = createdFolder.id;
+                    folder.Status = "Created in Destination";
+                }
+                catch (Exception e)
+                {
+                    folder.Status = e.Message;
+                }
+            }
+
+            if (folder.SubFolders.Any())
+            {
+                CreateFolders(folder.SubFolders, folderService, destinationId, destinationBinderId, contentService,
+                    teamId, folder.id);
+            }
+
+            Parallel.ForEach(folder.Contents, new ParallelOptions { MaxDegreeOfParallelism = 10 }, content =>
+            {
+                try
+                {
+                    var (fileBytes, fileName) = contentService.DownloadContent(teamId, content.id).GetAwaiter().GetResult();
+                    var response = contentService.UploadContent(destinationId, fileBytes, fileName, destinationBinderId, folder.id).GetAwaiter().GetResult();
+                    content.Status = "Uploaded to Destination";
+                }
+                catch (Exception e)
+                {
+                    content.Status = e.Message;
+                }
+            });
+
+
+
         }
     }
 }

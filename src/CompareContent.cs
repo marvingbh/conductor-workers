@@ -3,6 +3,7 @@ using Conductor.Client.Interfaces;
 using Conductor.Client.Models;
 using Conductor.Client.Worker;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 using Workers.Dtos;
 
 namespace Workers;
@@ -21,8 +22,8 @@ public class CompareContent : IWorkflowTask
     public TaskResult Execute(Conductor.Client.Models.Task task)
     {
         var input = task.InputData;
-        var sourceContent = JsonConvert.DeserializeObject<InputContents>(input["sourcecontent"].ToString());
-        var destinationContent = JsonConvert.DeserializeObject<InputContents>(input["destinationcontent"].ToString());
+        var sourceContent = JsonConvert.DeserializeObject<InputContents>(input["sourcecontent"].ToString() ?? string.Empty);
+        var destinationContent = JsonConvert.DeserializeObject<InputContents>(input["destinationcontent"].ToString() ?? string.Empty);
 
         var result = CompareFolders(sourceContent?.contents, destinationContent?.contents);
 
@@ -33,36 +34,39 @@ public class CompareContent : IWorkflowTask
         return task.Completed(output);
     }
 
-    public static List<Folder> CompareFolders(Folder[] first, Folder[] second)
+    public static List<Folder> CompareFolders(Folder[] sourceFolders, Folder[] destinationFolders)
     {
         var result = new List<Folder>();
 
-        foreach (var folder in first)
+        foreach (var folder in sourceFolders)
         {
-            var match = second.FirstOrDefault(sf => sf.name == folder.name);
+            var match = destinationFolders.FirstOrDefault(sf => sf.name == folder.name);
             if (match == null)
             {
                 folder.SetShouldCreateFolder(true);
-                if (folder.Contents.Any())
-                {
-                    result.Add(folder);
-                }
+                SetShouldCreateFolderRecursivy(true, folder.SubFolders);
+                result.Add(folder);
             }
             else
             {
                 folder.id = match.id;
                 folder.SetShouldCreateFolder(false);
+
+                var comparedSubfolders = CompareFolders(folder.SubFolders.ToArray(), match.SubFolders.ToArray());
+                folder.SubFolders = comparedSubfolders;
+
                 var newContents = folder.Contents
                     .Where(c => !match.Contents.Any(sc => sc.title == c.title && sc.subType == c.subType))
                     .ToList();
 
-                if (newContents.Any())
+                if (newContents.Any() || comparedSubfolders.Any())
                 {
                     var newFolder = new Folder
                     {
-                        id = folder.id,
+                        id = match.id,
                         name = folder.name,
-                        Contents = newContents
+                        Contents = newContents,
+                        SubFolders = comparedSubfolders
                     };
                     result.Add(newFolder);
                 }
@@ -71,4 +75,18 @@ public class CompareContent : IWorkflowTask
 
         return result;
     }
+
+    public static void SetShouldCreateFolderRecursivy(bool shouldCreateFolder, List<Folder> folders)
+    {
+        foreach (var folder in folders)
+        {
+            folder.SetShouldCreateFolder(shouldCreateFolder);
+            if (folder.SubFolders.Any())
+            {
+                SetShouldCreateFolderRecursivy(shouldCreateFolder, folder.SubFolders);
+            }
+        }
+
+    }
+
 }

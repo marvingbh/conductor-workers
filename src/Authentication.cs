@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Workers.Dtos;
+using File = System.IO.File;
 
 namespace APIClient
 {

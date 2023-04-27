@@ -1,7 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 using Conductor.Client;
 using Conductor.Client.Authentication;
+using Conductor.Client.Extensions;
 using Conductor.Client.Worker;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Task = System.Threading.Tasks.Task;
 
 namespace Workers
@@ -17,24 +22,25 @@ namespace Workers
 
             };
 
-            var host = WorkflowTaskHost.CreateWorkerHost(configuration, new ExtractContent());
-            var extractTask = host.StartAsync();
+            await new HostBuilder()
+                .ConfigureServices((ctx, services) =>
+                {
+                    // First argument is optional headers which client wasnt to pass.
+                    services.AddConductorWorker(configuration);
+                    services.AddConductorWorkflowTask<ExtractContent>();
+                    services.AddConductorWorkflowTask<CompareContent>();
+                    services.AddConductorWorkflowTask<UploadContent>();
+                    services.AddConductorWorkflowTask<ExtractParameters>();
+                    services.AddHostedService<WorkflowsWorkerService>();
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.SetMinimumLevel(LogLevel.Debug);
+                    logging.AddConsole();
+                })
+                .RunConsoleAsync();
+            Console.ReadLine();
 
-            var host1 = WorkflowTaskHost.CreateWorkerHost(configuration, new CompareContent());
-            var compareTask = host1.StartAsync();
-
-            var host2 = WorkflowTaskHost.CreateWorkerHost(configuration, new UploadContent());
-            var uploadTask = host2.StartAsync();
-
-            var host3 = WorkflowTaskHost.CreateWorkerHost(configuration, new ExtractParameters());
-            var parametersTask = host3.StartAsync();
-
-            await parametersTask;
-            await extractTask;
-            await compareTask;
-            await uploadTask;
-
-            Thread.Sleep(TimeSpan.FromSeconds(100));
         }
     }
 }

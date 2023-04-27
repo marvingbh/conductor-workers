@@ -1,11 +1,10 @@
 ﻿using APIClient;
-using bulkupload.Models;
-using bulkupload.Workflows;
+
 using Conductor.Client.Extensions;
 using Conductor.Client.Interfaces;
 using Conductor.Client.Models;
 using Conductor.Client.Worker;
-using Florence.eBinder.Clients;
+
 using RestSharp;
 using System;
 using Workers.Application;
@@ -48,27 +47,5 @@ public class ExtractContent : IWorkflowTask
         return task.Completed(output);
     }
 
-    private static MiddlewareController GetMiddlewareController()
-    {
-        ApiClient sdkApiClient = MiddlewareController.InitializeApiClient(Config.Instance.HostName, Config.Instance.UserName, Config.Instance.PrivateKey, Config.Instance.TeamId);
 
-        return new MiddlewareController(sdkApiClient);
-    }
-
-    private static string GetBinderId(bool uploadFiles, MiddlewareController middleware)
-    {
-        string binderId;
-        if (uploadFiles)
-        {
-            // If uploading files, must create binder if it doesn't exist or get the binder Id.
-            binderId = middleware.GetOrCreateBinder(Config.Instance.TeamId, Config.Instance.BinderName, Config.Instance.ForceBinderCreation);
-        }
-        else
-        {
-            // If simply comparing files (not uploading) get the binder Id if it exists.
-            binderId = middleware.GetBinder(Config.Instance.TeamId, Config.Instance.BinderName);
-        }
-
-        return binderId;
-    }
 }

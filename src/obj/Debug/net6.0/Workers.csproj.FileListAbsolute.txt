@@ -3,12 +3,8 @@ D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\Workers.deps.json
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\Workers.runtimeconfig.json
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\Workers.dll
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\Workers.pdb
-D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\AWSSDK.Core.dll
-D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\AWSSDK.SQS.dll
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\conductor-csharp.dll
-D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\Florence.eBinder.dll
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\JsonSubTypes.dll
-D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\log4net.dll
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\Microsoft.Extensions.Caching.Abstractions.dll
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\Microsoft.Extensions.Caching.Memory.dll
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\Microsoft.Extensions.Configuration.dll
@@ -43,8 +39,6 @@ D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\RestSharp.Serializers.Newtonsoft
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\System.Diagnostics.EventLog.dll
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Diagnostics.EventLog.Messages.dll
 D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Diagnostics.EventLog.dll
-D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\BulkUploader.dll
-D:\work\FlorenceHC\Workers\src\bin\Debug\net6.0\BulkUploader.pdb
 D:\work\FlorenceHC\Workers\src\obj\Debug\net6.0\Workers.csproj.AssemblyReference.cache
 D:\work\FlorenceHC\Workers\src\obj\Debug\net6.0\Workers.GeneratedMSBuildEditorConfig.editorconfig
 D:\work\FlorenceHC\Workers\src\obj\Debug\net6.0\Workers.AssemblyInfoInputs.cache
